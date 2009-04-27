@@ -23,6 +23,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.jdesktop.swingx.graphics.BlendComposite;
+
 /**
  * An example of a "heat map".
  * 
@@ -53,9 +55,9 @@ public class Heatmap extends JPanel implements MouseListener {
 
     // Create lookup operation for colorizing the monochrome image
     final BufferedImage colorImage =
-        createGradientImage(new Dimension(256, 1), Color.WHITE, Color.RED, Color.YELLOW,
+        createGradientImage(new Dimension(64, 1), Color.WHITE, Color.RED, Color.YELLOW,
             Color.GREEN.darker(), Color.CYAN, Color.BLUE, new Color(0, 0, 0x33));
-    final LookupTable colorTable = createColorLookupTable(colorImage, 256, .5f);
+    final LookupTable colorTable = createColorLookupTable(colorImage, .5f);
     colorOp = new LookupOp(colorTable, null);
 
     // Create monochrome image and fill with with
@@ -117,15 +119,11 @@ public class Heatmap extends JPanel implements MouseListener {
    * Creates the color lookup table from an image.
    * 
    * @param im
-   * @param tableSize number of colors to use; must be > 0 and < 256 
    * @param alpha alpha channel (between 0.0 and 1.0)
    * @return
    */
-  public static LookupTable createColorLookupTable(BufferedImage im, int tableSize, float alpha) {
-    if (tableSize < 0 || tableSize > 256) {
-      throw new IllegalArgumentException("Color table size must be > 0 and <= 256");
-    }
-    
+  public static LookupTable createColorLookupTable(BufferedImage im, float alpha) {
+    int tableSize = 256;
     Raster imageRaster = im.getData();
     double sampleStep = 1d * im.getWidth() / tableSize; // Sample pixels evenly
     byte[][] colorTable = new byte[4][tableSize];
